@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: ShardingSphere
+  profiles:
+    active: dev
+  shardingsphere:
+    mode:
+      type: Memory
+    datasource:
+      names: server-user,server-order
+      server-user:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        jdbcUrl: jdbc:mysql://172.16.84.148:3301/db_user
+        username: root
+        password: 123456
+      server-order:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        jdbcUrl: jdbc:mysql://172.16.84.148:3302/db_order
+        username: root
+        password: 123456
+    rules:
+      sharding:
+        tables:
+          # 将逻辑表和真实的数据节点下的表映射起来
+          t_user:
+            actual-data-nodes: server-user.t_user
+          t_order:
+            actual-data-nodes: server-order.t_order
+    props:
+      sql-show: true # 打印SQL

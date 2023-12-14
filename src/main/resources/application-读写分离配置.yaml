@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: ShardingSphere
+  profiles:
+    active: dev
+  shardingsphere:
+    mode:
+      type: Memory
+    datasource:
+      names: master,slave1,slave2
+      master:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        jdbcUrl: jdbc:mysql://172.16.84.148:3306/db_user
+        username: root
+        password: 123456
+      slave1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        jdbcUrl: jdbc:mysql://172.16.84.148:3307/db_user
+        username: root
+        password: 123456
+      slave2:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        jdbcUrl: jdbc:mysql://172.16.84.148:3308/db_user
+        username: root
+        password: 123456
+    rules:
+      readwrite-splitting:
+        data-sources:
+          myds: # 读写分离逻辑数据源名称
+            type: Static # 读写分离类型
+            props:
+              write-data-source-name: master # 写库数据源名称
+              read-data-source-names: slave1,slave2 # 读库数据源名称
+            load-balancer-name: alg_round # 负载均衡算法名称
+        load-balancers:
+          alg_round:
+            type: ROUND_ROBIN # 负载均衡算法配置
+    props:
+      sql-show: true # 打印SQL
